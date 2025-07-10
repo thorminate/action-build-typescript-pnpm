@@ -78,10 +78,10 @@ if (pushToBranch == true && !githubToken)
       recursive: true,
     });
     await io.cp(join(directory, "package.json"), `branch-${branchName}`);
-    await io.cp(join(directory, "package-lock.json"), `branch-${branchName}`);
+    await io.cp(join(directory, "pnpm-lock.yaml"), `branch-${branchName}`);
 
     // Commit files
-    core.info("Adding and commiting files");
+    core.info("Adding and committing files");
     await exec(`git add ."`, [], { cwd: `branch-${branchName}` });
     // We use the catch here because sometimes the code itself may not have changed
     await exec(`git commit -m "build: ${github.context.sha}"`, [], {
