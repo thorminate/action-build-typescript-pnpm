@@ -20,6 +20,15 @@ if (pushToBranch == true && !githubToken)
   const tsconfigPath = join(directory, "tsconfig.json");
 
   try {
+    // Install pnpm using pnpm/action-setup@v4
+    core.info("Installing pnpm");
+    await github.actions.executeAction({
+      action: "pnpm/action-setup@v4",
+      env: {
+        NODE_VERSION: "16",
+      },
+    });
+
     await access(tsconfigPath);
 
     const tsconfig = require(tsconfigPath);
@@ -28,10 +37,10 @@ if (pushToBranch == true && !githubToken)
       : directory;
     // Install tsc
     core.info("Installing tsc");
-    await exec("npm i --g typescript");
+    await exec("pnpm i -g typescript");
 
     core.info("Installing dependencies");
-    await exec(`npm i`, [], { cwd: directory }).catch((_err) => {});
+    await exec(`pnpm i`, [], { cwd: directory }).catch((_err) => {});
 
     // Build project
     console.info("Building project");
