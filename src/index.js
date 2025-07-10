@@ -20,14 +20,7 @@ if (pushToBranch == true && !githubToken)
   const tsconfigPath = join(directory, "tsconfig.json");
 
   try {
-    // Install pnpm using pnpm/action-setup@v4
-    core.info("Installing pnpm");
-    await github.actions.executeAction({
-      action: "pnpm/action-setup@v4",
-      env: {
-        NODE_VERSION: "16",
-      },
-    });
+    const octokit = github.getOctokit(githubToken);
 
     await access(tsconfigPath);
 
@@ -47,8 +40,6 @@ if (pushToBranch == true && !githubToken)
     const build = await exec(`tsc`, [], { cwd: directory });
     if (build !== 0) return exit("Something went wrong while building.");
     if (pushToBranch == "false") return process.exit(0);
-
-    const octokit = github.getOctokit(githubToken);
 
     const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
     const branches = await octokit.repos.listBranches({
